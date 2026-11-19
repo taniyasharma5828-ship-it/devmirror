@@ -1,0 +1,2102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevMirror — Know your code. Grow your craft.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap');
+    :root {
+      --bg: #0c0e11;
+      --panel: #13161b;
+      --line: #25292f;
+      --muted: #858c98;
+      --green: #b9f582;
+      --text: #f0f1f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px 'DM Sans', sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, div[tabindex="0"]:focus-visible, span[tabindex="0"]:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+    a { color: inherit; text-decoration: none; }
+    aside {
+      width: 232px;
+      position: fixed;
+      inset: 0 auto 0 0;
+      border-right: 1px solid var(--line);
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      background: #101216;
+      z-index: 10;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font: 800 23px Manrope;
+      margin: 0 10px 42px;
+    }
+    .logo {
+      display: inline-grid;
+      place-items: center;
+      background: var(--green);
+      color: #151d11;
+      width: 31px;
+      height: 33px;
+      border-radius: 9px;
+      font-size: 23px;
+    }
+    .label {
+      font-size: 10px;
+      letter-spacing: 1.7px;
+      color: #6f7783;
+      font-weight: 700;
+      margin: 0 14px 14px;
+    }
+    nav button {
+      border: 0;
+      background: none;
+      color: #9299a5;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 7px;
+      text-align: left;
+      margin: 5px 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    nav button.active {
+      background: #232c20;
+      color: var(--green);
+    }
+    nav button:hover:not(.active) {
+      background: #181d22;
+      color: #cfd5de;
+    }
+    .ic {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .badge {
+      margin-left: auto;
+      font-size: 9px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      background: #232924;
+      color: var(--green);
+      font-weight: 700;
+    }
+    .sidefoot { margin-top: auto; display: flex; flex-direction: column; gap: 20px; }
+    .help {
+      background: #16191f;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 16px;
+    }
+    .help strong { font: 600 13px Manrope; display: block; margin-bottom: 5px; color: #e5e8ec; }
+    .help p { font-size: 11px; color: var(--muted); margin: 0 0 12px; line-height: 1.5; }
+    .help button {
+      border: 0;
+      background: none;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #161a20;
+      border: 1px solid #232832;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .profile:hover {
+      background: #1c222b;
+      border-color: #313947;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      background: #222923;
+      border: 1px solid #3c4c35;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .profile small { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+    main { margin-left: 232px; min-height: 100vh; }
+    header {
+      height: 76px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 38px;
+      color: #a0a6b0;
+      font-size: 12px;
+      background: #0f1216;
+    }
+    .topright { display: flex; align-items: center; gap: 18px; }
+    .demo {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .demo.checking {
+      color: #facc15;
+      border: 1px solid #713f12;
+      background: #241c0e;
+    }
+    .demo.connected {
+      color: var(--green);
+      border: 1px solid #3d5231;
+      background: #172114;
+    }
+    .demo.unavailable {
+      color: #f87171;
+      border: 1px solid #7f1d1d;
+      background: #281212;
+    }
+    .iconbtn {
+      background: none;
+      border: 0;
+      color: #a9afb9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 6px;
+    }
+    .iconbtn:hover { color: #f0f1f2; background: #1a1e24; }
+    .content { padding: 33px 38px 40px; max-width: 1550px; margin: auto; }
+    .heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 14px; }
+    .eyebrow { color: var(--green); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+    h1 { font: 700 28px Manrope; letter-spacing: -1px; margin: 5px 0 9px; }
+    h2 { font: 650 16px Manrope; margin: 0; }
+    p { color: var(--muted); line-height: 1.6; }
+    .heading p { margin: 0; font-size: 13px; }
+    .primary {
+      border: 0;
+      background: var(--green);
+      color: #182111;
+      border-radius: 7px;
+      padding: 12px 17px;
+      font-weight: 650;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s;
+    }
+    .primary:hover { opacity: 0.92; }
+    .secondary {
+      border: 1px solid #353b44;
+      background: #1a1e24;
+      color: #d7dbe1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 550;
+      transition: background 0.15s;
+    }
+    .secondary:hover { background: #222730; }
+    .hero {
+      border: 1px solid #39422f;
+      border-radius: 12px;
+      background: radial-gradient(ellipse at 85% 50%, #29351e 0, transparent 55%), #171d16;
+      padding: 27px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      min-height: 184px;
+    }
+    .hero h2 { font: 650 25px Manrope; letter-spacing: -.7px; margin: 10px 0; }
+    .hero p { font-size: 12px; max-width: 480px; margin: 0 0 19px; color: #a7afa1; }
+    .hero .primary { font-size: 12px; padding: 10px 14px; }
+    .heroart { width: 250px; height: 133px; position: relative; margin-right: 30px; transform: rotate(-7deg); }
+    .codecard {
+      background: #131a12;
+      border: 1px solid #4d6240;
+      border-radius: 9px;
+      padding: 18px;
+      position: absolute;
+      inset: 5px 25px 0 0;
+      box-shadow: 12px 12px 0 #26331e;
+      color: #8ca77a;
+      font: 12px monospace;
+      line-height: 1.9;
+    }
+    .codecard b { color: #c3eb9e; }
+    .float {
+      position: absolute;
+      right: 0;
+      bottom: -2px;
+      border: 1px solid #5b7346;
+      border-radius: 9px;
+      background: #25351e;
+      color: var(--green);
+      padding: 13px;
+      transform: rotate(13deg);
+      font-size: 23px;
+    }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 17px; margin-bottom: 26px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+    .stat { padding: 18px 20px; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; color: #a1a8b3; font-size: 12px; }
+    .stat-top .ic { color: #7e8994; }
+    .value { font: 650 29px Manrope; margin: 13px 0 8px; letter-spacing: -1px; }
+    .value span { font-size: 15px; color: #707987; font-weight: 400; }
+    .small { font-size: 11px; color: var(--muted); }
+    .positive { color: var(--green); font-weight: 600; }
+    .grid { display: grid; grid-template-columns: 1.65fr 1fr; gap: 22px; }
+    .panel { padding: 22px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 21px; }
+    .link { border: 0; background: none; color: #a7afb9; font-size: 11px; padding: 0; cursor: pointer; }
+    .link:hover { color: var(--green); }
+    .pill { border: 1px solid #323840; border-radius: 5px; padding: 6px 9px; font-size: 10px; color: #aab1bb; background: #1a1e24; }
+    .chart { height: 189px; position: relative; padding-left: 28px; }
+    .chart svg { height: 158px; width: 100%; overflow: visible; }
+    .chart-labels { display: flex; justify-content: space-between; color: #68717d; font-size: 10px; margin-top: 7px; }
+    .axis { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; justify-content: space-between; height: 154px; font-size: 9px; color: #68717d; }
+    .skill { margin: 18px 0; }
+    .row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+    .bar { height: 6px; background: #20242a; border-radius: 99px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--green); border-radius: 99px; transition: width 0.3s; }
+    .repos { margin-top: 24px; }
+    .repo-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .repo-table th { color: #66707d; font-size: 10px; letter-spacing: 1.3px; text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 700; }
+    .repo-table td { padding: 15px 14px; border-bottom: 1px solid #1a1e24; vertical-align: middle; }
+    .reponame { display: flex; gap: 12px; align-items: center; }
+    .repoicon { width: 30px; height: 30px; background: #191c22; border: 1px solid var(--line); border-radius: 7px; display: grid; place-items: center; color: #848c97; }
+    .reponame small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .tag { font-size: 10px; padding: 3px 7px; border-radius: 4px; background: #1f251c; border: 1px solid #364230; color: #9fcc7d; font-weight: 600; display: inline-block; }
+    .tag.purple { background: #211c29; border-color: #3e3250; color: #c4a1eb; }
+    .formbox { padding: 32px; max-width: 600px; margin: auto; }
+    .field { display: block; margin: 16px 0 6px; font-size: 12px; color: #c8ced6; font-weight: 600; }
+    input, textarea {
+      width: 100%;
+      background: #101217;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px 14px;
+      color: #f0f1f2;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus { border-color: var(--green); outline: none; }
+    textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+    .question { font-size: 15px; line-height: 1.6; margin: 20px 0; font-weight: 500; }
+    .notice { background: #191f16; border-left: 3px solid var(--green); padding: 12px 16px; border-radius: 0 6px 6px 0; font-size: 12px; margin: 16px 0; color: #ccd5c6; }
+    .task { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #1b1e24; align-items: flex-start; cursor: pointer; }
+    .task:last-child { border-bottom: none; }
+    .task input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; cursor: pointer; accent-color: var(--green); }
+    .empty { padding: 48px 24px; text-align: center; }
+    .empty p { margin-bottom: 16px; }
+    .error { color: #f87171; font-size: 12px; margin: 8px 0; }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #28303a;
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1c221a;
+      border: 1px solid #3d4f34;
+      color: #e5f0dc;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.hide { opacity: 0; pointer-events: none; transform: translateY(10px); }
+    /* Interview Mode & Character Speaking Styles */
+    .mode-toggle {
+      display: inline-flex;
+      background: #111418;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .mode-btn {
+      background: none;
+      border: 0;
+      color: #949ea8;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover { color: #f0f1f2; }
+    .mode-btn.active {
+      background: #1e242c;
+      color: var(--green);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .interviewer-box {
+      background: radial-gradient(circle at 50% 20%, #1c261e 0%, #101413 70%);
+      border: 1px solid #2d3b2a;
+      border-radius: 12px;
+      padding: 24px 20px;
+      margin: 18px 0;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .interviewer-box.speaking {
+      border-color: var(--green);
+      box-shadow: 0 0 24px rgba(188, 240, 142, 0.12);
+    }
+    .avatar-wrapper {
+      position: relative;
+      width: 106px;
+      height: 106px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-aura {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(188, 240, 142, 0.25) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .speaking .avatar-aura {
+      opacity: 1;
+      animation: auraPulse 1.8s infinite ease-in-out;
+    }
+    @keyframes auraPulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.18); opacity: 0.75; }
+    }
+    .avatar-svg {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #141b18;
+      border: 2px solid #364933;
+      padding: 6px;
+      transition: all 0.3s;
+      animation: avatarFloat 4s ease-in-out infinite;
+    }
+    .speaking .avatar-svg {
+      border-color: var(--green);
+      box-shadow: 0 0 16px rgba(188, 240, 142, 0.3);
+    }
+    @keyframes avatarFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .mouth-idle { display: block; }
+    .mouth-speak { display: none; }
+    .speaking .mouth-idle { display: none; }
+    .speaking .mouth-speak {
+      display: block;
+      animation: mouthTalk 0.25s infinite alternate ease-in-out;
+      transform-origin: center;
+    }
+    @keyframes mouthTalk {
+      from { transform: scaleY(0.4); }
+      to { transform: scaleY(1.3); }
+    }
+    .sound-waves {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+      margin-left: 8px;
+    }
+    .wave-bar {
+      width: 3px;
+      height: 5px;
+      background: var(--green);
+      border-radius: 2px;
+      transition: height 0.15s;
+    }
+    .speaking .wave-bar {
+      animation: waveBounce 0.8s infinite ease-in-out;
+    }
+    .speaking .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .speaking .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .speaking .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .speaking .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes waveBounce {
+      0%, 100% { height: 4px; }
+      50% { height: 16px; }
+    }
+    .speech-status {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9eb195;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .speech-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      margin-top: 14px;
+    }
+    .speech-bubble {
+      background: rgba(14, 18, 16, 0.85);
+      border: 1px solid #283726;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e5f0dc;
+      max-width: 720px;
+      width: 100%;
+      margin: 8px auto 0;
+      text-align: left;
+    }
+    .text-question-card {
+      background: #14181f;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 20px 22px;
+      margin: 16px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      aside { width: 68px; padding: 24px 10px; }
+      .brand span:not(.logo) { display: none; }
+      .brand { margin-bottom: 24px; justify-content: center; }
+      .label, .sidefoot .help, .profile div { display: none; }
+      nav button span:not(.badge) { display: none; }
+      nav button { padding: 13px; justify-content: center; }
+      .badge { display: none; }
+      main { margin-left: 68px; }
+      header { padding: 0 20px; height: 63px; }
+      .content { padding: 24px 18px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: 1fr; }
+      .heroart { display: none; }
+      .topright { gap: 10px; }
+    }
+    @media (max-width: 580px) {
+      .stats { grid-template-columns: 1fr; }
+      .heading { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <a class="brand" href="#dashboard" aria-label="DevMirror home">
+      <span class="logo">⌘</span>
+      <span>devmirror<span style="color:var(--green)">.</span></span>
+    </a>
+    <div class="label">WORKSPACE</div>
+    <nav id="nav"></nav>
+    <div class="sidefoot">
+      <div class="help">
+        <strong>Your next level starts here.</strong>
+        <p>Turn your project knowledge into your strongest skill.</p>
+        <button onclick="go('roadmap')">Explore your roadmap ↗</button>
+      </div>
+      <div class="profile" id="userProfileBtn" role="button" tabindex="0" onclick="handleProfileClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleProfileClick();}" style="cursor:pointer" aria-label="Account profile">
+        <div class="avatar" id="sidebarAvatar">G</div>
+        <div>
+          <span id="sidebarUserName">Guest Developer</span>
+          <small id="sidebarUserRole">Click to sign in</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <span id="breadcrumb">Workspace <span style="color:#46505c;margin:0 10px">/</span> Overview</span>
+      <div class="topright">
+        <span class="demo checking" id="apiStatusBadge" role="button" tabindex="0" onclick="checkBackendHealth(true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();checkBackendHealth(true);}" style="cursor:pointer" title="Click to test backend connection">● Checking backend...</span>
+        <button class="iconbtn" aria-label="Notifications" onclick="handleNotificationClick()" id="bell"></button>
+        <div class="avatar" id="headerAvatar" style="width:28px;height:28px;cursor:pointer" onclick="handleProfileClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleProfileClick();}" tabindex="0" role="button" aria-label="Account profile" title="Account profile">G</div>
+      </div>
+    </header>
+    <div class="content" id="app"></div>
+  </main>
+
+  <div class="toast hide" id="toast" role="status"></div>
+
+  <script>
+    // -------------------------------------------------------------
+    // API Configuration
+    // -------------------------------------------------------------
+    // Cleanly connect to relative /api on production domains (e.g. *.vercel.app)
+    // Only proxy to port 5000 if running on separate dev tools like Vite/LiveServer
+    const API_BASE = (window.location.port === '5173' || window.location.port === '5500')
+      ? 'http://localhost:5000'
+      : '';
+
+    let currentUser = null;
+    let cachedDashboard = null;
+    let cachedRepos = [];
+    let currentInterview = null;
+    let interviewIndex = 0;
+    let activeRepoId = null;
+    let backendHealthStatus = 'checking'; // 'checking' | 'connected' | 'unavailable'
+    let interviewMode = localStorage.getItem('devmirror_interview_mode') || 'avatar'; // 'avatar' | 'text'
+    let sarvamSpeaker = localStorage.getItem('sarvam_speaker') || 'meera';
+    let currentSpeechAudio = null;
+    let isSpeaking = false;
+
+    // Real backend health check function
+    async function checkBackendHealth(isManual = false) {
+      const badge = document.querySelector('#apiStatusBadge');
+      if (badge) {
+        badge.className = 'demo checking';
+        badge.textContent = '● Checking backend...';
+      }
+      backendHealthStatus = 'checking';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/health`, {
+          method: 'GET',
+          signal: controller.signal,
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (data.status === 'ok') {
+            backendHealthStatus = 'connected';
+            if (badge) {
+              badge.className = 'demo connected';
+              badge.textContent = '● Connected to Backend';
+            }
+            if (isManual) toast('Backend is online and connected!');
+            return true;
+          }
+        }
+        throw new Error(`HTTP ${res.status}`);
+      } catch (err) {
+        backendHealthStatus = 'unavailable';
+        if (badge) {
+          badge.className = 'demo unavailable';
+          badge.textContent = '● Backend Offline';
+        }
+        if (isManual) toast('Backend is currently unreachable. Check your connection or deployment.');
+        return false;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    function handleNotificationClick() {
+      if (backendHealthStatus === 'connected') {
+        toast('Connected to DevMirror live backend!');
+      } else if (backendHealthStatus === 'checking') {
+        toast('Checking backend connection status...');
+      } else {
+        toast('Backend is currently unreachable. Click the status badge to retry.');
+      }
+    }
+
+    // Helper for API fetch requests with bounded timeout, credentials, and error handling
+    async function apiRequest(endpoint, options = {}) {
+      const url = `${API_BASE}${endpoint}`;
+      const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      };
+
+      const token = localStorage.getItem('devmirror_token');
+      if (token) {
+        defaultHeaders['Authorization'] = `Bearer ${token}`;
+      }
+
+      const timeoutMs = options.timeout || 15000;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        const res = await fetch(url, {
+          ...options,
+          headers: {
+            ...defaultHeaders,
+            ...(options.headers || {})
+          },
+          credentials: 'include',
+          signal: controller.signal
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          if (res.status === 401 && endpoint !== '/api/auth/login' && endpoint !== '/api/auth/register') {
+            const wasLoggedIn = !!currentUser;
+            currentUser = null;
+            localStorage.removeItem('devmirror_token');
+            updateSidebarUser();
+            if (wasLoggedIn) {
+              toast('Your session has expired. Please sign in again.');
+            }
+            throw new Error(data.error || 'Authentication required. Please sign in.');
+          }
+          throw new Error(data.error || `HTTP ${res.status}: Request failed`);
+        }
+
+        return data;
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          throw new Error('Request timed out. The backend server took too long to respond. Please try again.');
+        }
+        if (err.message && err.message.includes('Failed to fetch')) {
+          throw new Error('Could not connect to backend server. Please verify your connection.');
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // UI Icons and Navigation
+    // -------------------------------------------------------------
+    const paths = {
+      dashboard: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
+      repositories: 'M4 5h6l2 3h8v12H4z',
+      interview: 'M4 4h16v12H9l-5 4z M8 8h8 M8 12h5',
+      report: 'M4 20V10 M10 20V4 M16 20v-8 M22 20V7',
+      roadmap: 'M5 4v16 M5 5h10l3 4-3 4H5',
+      plus: 'M12 5v14 M5 12h14',
+      arrow: 'M5 12h14 M14 7l5 5-5 5',
+      git: 'M8 3v12a4 4 0 004 4h4 M5 6l3-3 3 3 M16 16l3 3-3 3',
+      bell: 'M6 8a6 6 0 0112 0v7l2 3H4l2-3z M10 21h4',
+      clock: 'M12 3a9 9 0 100 18 9 9 0 000-18 M12 7v5l3 2',
+      check: 'M5 12l4 4L19 6',
+      code: 'M8 6l-6 6 6 6 M16 6l6 6-6 6',
+      target: 'M12 3a9 9 0 100 18 9 9 0 000-18 M12 7a5 5 0 100 10 5 5 0 000-10 M12 11v2'
+    };
+
+    const icon = (n) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[n] || paths.code}"/></svg>`;
+
+    const labels = {
+      dashboard: 'Overview',
+      repositories: 'My repositories',
+      interview: 'Mock interviews',
+      report: 'Skill insights',
+      roadmap: 'Learning roadmap'
+    };
+
+    document.querySelector('#nav').innerHTML = Object.entries(labels).map(([k, v]) => `
+      <button data-nav="${k}" onclick="go('${k}')">
+        ${icon(k)}<span>${v}</span>${k === 'interview' ? '<span class="badge">LIVE</span>' : ''}
+      </button>
+    `).join('');
+
+    document.querySelector('#bell').innerHTML = icon('bell');
+
+    function toast(s) {
+      const e = document.querySelector('#toast');
+      e.textContent = s;
+      e.classList.remove('hide');
+      clearTimeout(window.tt);
+      window.tt = setTimeout(() => e.classList.add('hide'), 3500);
+    }
+
+    function go(p) {
+      if (p !== 'interview' && typeof stopSpeaking === 'function') stopSpeaking();
+      location.hash = p;
+      if (location.hash.slice(1) === p) render(p);
+    }
+
+    window.addEventListener('hashchange', () => {
+      const page = location.hash.slice(1);
+      if (page !== 'interview' && typeof stopSpeaking === 'function') stopSpeaking();
+      render(page);
+    });
+
+    function heading(t, p, action = '') {
+      return `<div class="heading"><div><h1>${t}</h1><p>${p}</p></div>${action}</div>`;
+    }
+
+    function addbtn() {
+      return `<button class="primary" onclick="go('analyze')">${icon('plus')} Analyze repository</button>`;
+    }
+
+    function escapeHTML(s) {
+      if (!s) return '';
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function updateSidebarUser() {
+      const sidebarAvatar = document.querySelector('#sidebarAvatar');
+      const headerAvatar = document.querySelector('#headerAvatar');
+      const sidebarUserName = document.querySelector('#sidebarUserName');
+      const sidebarUserRole = document.querySelector('#sidebarUserRole');
+
+      if (currentUser && currentUser.name) {
+        const initials = currentUser.name.split(' ').map(n => n[0]).filter(Boolean).join('').slice(0, 2).toUpperCase() || 'DV';
+        if (sidebarAvatar) sidebarAvatar.textContent = initials;
+        if (headerAvatar) headerAvatar.textContent = initials;
+        if (sidebarUserName) sidebarUserName.textContent = currentUser.name;
+        if (sidebarUserRole) sidebarUserRole.textContent = currentUser.targetRole || 'Developer';
+      } else {
+        if (sidebarAvatar) sidebarAvatar.textContent = 'G';
+        if (headerAvatar) headerAvatar.textContent = 'G';
+        if (sidebarUserName) sidebarUserName.textContent = 'Guest Developer';
+        if (sidebarUserRole) sidebarUserRole.textContent = 'Click to sign in';
+      }
+    }
+
+    function handleProfileClick() {
+      if (currentUser) {
+        if (confirm(`Signed in as ${currentUser.name} (${currentUser.email}). Do you want to sign out?`)) {
+          logout();
+        }
+      } else {
+        go('login');
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Auth State Check
+    // -------------------------------------------------------------
+    async function checkAuth() {
+      const token = localStorage.getItem('devmirror_token');
+      try {
+        const data = await apiRequest('/api/auth/me', { timeout: 6000 });
+        if (data && data.success && data.user) {
+          currentUser = data.user;
+        } else {
+          currentUser = null;
+        }
+      } catch (e) {
+        currentUser = null;
+      }
+      updateSidebarUser();
+      return currentUser;
+    }
+
+    async function logout() {
+      try {
+        await apiRequest('/api/auth/logout', { method: 'POST', timeout: 5000 });
+      } catch (e) {}
+      localStorage.removeItem('devmirror_token');
+      currentUser = null;
+      cachedDashboard = null;
+      cachedRepos = [];
+      currentInterview = null;
+      updateSidebarUser();
+      toast('Signed out successfully.');
+      go('login');
+    }
+
+    // -------------------------------------------------------------
+    // Page Rendering
+    // -------------------------------------------------------------
+    async function render(page = 'dashboard') {
+      document.querySelectorAll('[data-nav]').forEach(b => {
+        b.classList.toggle('active', b.dataset.nav === page || (page.startsWith('repo-') && b.dataset.nav === 'repositories'));
+      });
+
+      document.querySelector('#breadcrumb').innerHTML = `Workspace <span style="color:#46505c;margin:0 10px">/</span> ${
+        labels[page] || ({ analyze: 'Analyze repository', complete: 'Interview complete', login: 'Sign In', register: 'Register' }[page]) || 'Details'
+      }`;
+
+      const app = document.querySelector('#app');
+
+      if (page === 'dashboard') {
+        renderDashboard(app);
+      } else if (page === 'login' || page === 'register') {
+        renderAuth(app, page);
+      } else if (page === 'repositories') {
+        renderRepositories(app);
+      } else if (page === 'analyze') {
+        renderAnalyze(app);
+      } else if (page.startsWith('repo-')) {
+        renderRepoDetail(app, page.split('repo-')[1]);
+      } else if (page === 'interview') {
+        renderInterview(app);
+      } else if (page === 'complete') {
+        renderComplete(app);
+      } else if (page === 'report') {
+        renderReport(app);
+      } else if (page === 'roadmap') {
+        renderRoadmap(app);
+      } else {
+        renderDashboard(app);
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    // -------------------------------------------------------------
+    // 1. Dashboard View
+    // -------------------------------------------------------------
+    async function renderDashboard(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Workspace Dashboard', 'Welcome to DevMirror. Connect your code to what you master.', `
+            <button class="primary" onclick="go('login')">Sign In</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          `)}
+
+          <section class="hero">
+            <div>
+              <span class="eyebrow">GROUNDED IN YOUR REPOSITORIES</span>
+              <h2>You built it. Now own it.</h2>
+              <p>Go beyond static code. Test your architectural reasoning with mock interviews grounded directly in your real GitHub source files.</p>
+              <button class="primary" onclick="go('register')">
+                Get Started Free ${icon('arrow')}
+              </button>
+              <button class="secondary" style="margin-left:10px" onclick="go('login')">
+                Sign In to Existing Account
+              </button>
+            </div>
+            <div class="heroart">
+              <div class="codecard">
+                <span style="color:#658053">● ● ●</span><br>
+                <b>const</b> engineer = {<br>
+                &nbsp; curiosity: <b>"high"</b>,<br>
+                &nbsp; verifiedSkills: <b>true</b><br>
+                };
+              </div>
+              <div class="float">&lt;/&gt;</div>
+            </div>
+          </section>
+
+          <div class="stats">
+            <div class="card stat">
+              <div class="stat-top">Repository Analysis ${icon('repositories')}</div>
+              <div class="value">AST<span> Indexing</span></div>
+              <div class="small">Deep structure & tech stack detection</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">Mock Interviews ${icon('interview')}</div>
+              <div class="value">6-8<span> Questions</span></div>
+              <div class="small">Grounded strictly in your source code</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">Skill Evaluation ${icon('target')}</div>
+              <div class="value">Rubric<span> Scoring</span></div>
+              <div class="small">Normalized benchmark comparisons</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">Personalized Roadmap ${icon('clock')}</div>
+              <div class="value">DAG<span> Graph</span></div>
+              <div class="small">Prioritized prerequisite learning tasks</div>
+            </div>
+          </div>
+
+          <div class="card formbox" style="text-align:center;max-width:580px;margin:30px auto">
+            <h2>Start Your Technical Assessment</h2>
+            <p style="margin:12px 0 24px">Sign in or create a developer account to analyze public GitHub repositories, run evaluation sessions, and unlock your personalized engineering roadmap.</p>
+            <button class="primary" onclick="go('login')">Sign In to Workspace</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="empty"><div class="spinner"></div><p style="margin-top:15px">Loading your live dashboard...</p></div>`;
+      try {
+        const data = await apiRequest('/api/dashboard');
+        cachedDashboard = data;
+
+        const summary = data.summary || { totalRepositories: 0, totalAssessments: 0, latestScore: 0 };
+        const skillStock = data.skillStock || { status: 'Not enough history', delta: 0 };
+        const skillsChart = data.skillsChart || { labels: [], scores: [], benchmarks: [] };
+        const repos = data.repositories || [];
+        const roadmap = data.roadmap || { progress: 0, completed: 0, total: 0 };
+
+        let skillsHtml = '';
+        if (skillsChart.labels.length > 0) {
+          skillsHtml = skillsChart.labels.map((skill, i) => {
+            const score = skillsChart.scores[i] || 0;
+            return `
+              <div class="skill">
+                <div class="row">
+                  <span>${skill}</span>
+                  <span style="color:var(--green)">${score}<span style="color:#66707c"> / 100</span></span>
+                </div>
+                <div class="bar"><i style="width:${score}%;"></i></div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          skillsHtml = `<p class="small">No assessments yet. Analyze a public GitHub repo to start.</p>`;
+        }
+
+        let repoTableHtml = '';
+        if (repos.length > 0) {
+          repoTableHtml = `
+            <table class="repo-table">
+              <thead><tr><th>REPOSITORY</th><th>TECHNOLOGY</th><th>COMMITS</th><th></th></tr></thead>
+              <tbody>
+                ${repos.slice(0, 4).map(r => `
+                  <tr>
+                    <td>
+                      <div class="reponame">
+                        <span class="repoicon">${icon('repositories')}</span>
+                        <div>
+                          <a href="#repo-${r._id}"><b>${r.owner}/${r.repo}</b></a>
+                          <small>${r.totalFiles || 0} files indexed</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span style="color:var(--green)">●</span> ${(r.technologies || []).slice(0, 2).map(t => t.name).join(', ') || 'Code'}</td>
+                    <td style="color:#858f9c;font-size:11px">${(r.commitSha || '').slice(0, 7)}</td>
+                    <td><button class="iconbtn" onclick="go('repo-${r._id}')">${icon('arrow')}</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        } else {
+          repoTableHtml = `
+            <div class="empty">
+              <p>No repositories analyzed yet.</p>
+              <button class="primary" style="margin-top:10px" onclick="go('analyze')">Analyze your first GitHub Repo</button>
+            </div>
+          `;
+        }
+
+        container.innerHTML = `
+          ${heading('Live Engineering Growth', `Welcome back, ${currentUser.name}. Let’s turn your code into what you master.`, addbtn())}
+
+          <section class="hero">
+            <div>
+              <span class="eyebrow">GROUNDED IN YOUR REPOSITORIES</span>
+              <h2>You built it. Now own it.</h2>
+              <p>Go beyond static code. Test your architectural reasoning with interviews grounded directly in your source files.</p>
+              <button class="primary" onclick="${repos.length > 0 ? `startInterviewSession('${repos[0]._id}')` : `go('analyze')`}">
+                ${repos.length > 0 ? 'Start Live Interview' : 'Analyze a Repository'} ${icon('arrow')}
+              </button>
+            </div>
+            <div class="heroart">
+              <div class="codecard">
+                <span style="color:#658053">● ● ●</span><br>
+                <b>const</b> engineer = {<br>
+                &nbsp; curiosity: <b>"high"</b>,<br>
+                &nbsp; verifiedSkills: <b>true</b><br>
+                };
+              </div>
+              <div class="float">&lt;/&gt;</div>
+            </div>
+          </section>
+
+          <div class="stats">
+            <div class="card stat">
+              <div class="stat-top">Repositories Analyzed ${icon('repositories')}</div>
+              <div class="value">${summary.totalRepositories}</div>
+              <div class="small">Indexed from GitHub API</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">Interviews Completed ${icon('interview')}</div>
+              <div class="value">${summary.totalAssessments}</div>
+              <div class="small">Evaluated against rubrics</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">SkillStock Score ${icon('target')}</div>
+              <div class="value">${summary.latestScore || 0}<span> /100</span></div>
+              <div class="small"><span class="positive">${skillStock.status}</span> trend</div>
+            </div>
+            <div class="card stat">
+              <div class="stat-top">Roadmap Progress ${icon('clock')}</div>
+              <div class="value">${roadmap.progress || 0}<span>%</span></div>
+              <div class="small">${roadmap.completed || 0} of ${roadmap.total || 0} tasks finished</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <section class="card panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Your Skill Snapshot</h2>
+                  <p style="font-size:11px;margin:6px 0 0">Normalized scores across evaluated domains</p>
+                </div>
+                <button class="link" onclick="go('report')">View Detailed Report ↗</button>
+              </div>
+              ${skillsHtml}
+            </section>
+
+            <section class="card panel">
+              <div class="panel-head">
+                <h2>Learning Roadmap</h2>
+                <button class="link" onclick="go('roadmap')">Open Roadmap ↗</button>
+              </div>
+              <div class="bar" style="margin-bottom:18px"><i style="width:${roadmap.progress || 0}%"></i></div>
+              <p class="small">Master prerequisite skills and close identified gaps.</p>
+              <button class="secondary" style="width:100%;margin-top:14px" onclick="go('roadmap')">View Actionable Tasks →</button>
+            </section>
+          </div>
+
+          <div class="grid repos">
+            <section class="card panel" style="grid-column: 1 / -1">
+              <div class="panel-head">
+                <h2>Your Analyzed Repositories</h2>
+                <button class="link" onclick="go('repositories')">View All Repositories →</button>
+              </div>
+              ${repoTableHtml}
+            </section>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          ${heading('Workspace Dashboard', 'Could not load dashboard data.', '')}
+          <div class="card empty">
+            <p class="error">${err.message}</p>
+            <button class="secondary" onclick="renderDashboard(document.querySelector('#app'))">Retry ${icon('arrow')}</button>
+          </div>
+        `;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 2. Auth View (Login / Register)
+    // -------------------------------------------------------------
+    function renderAuth(container, page) {
+      container.innerHTML = `
+        ${heading('Your next level is waiting.', 'A workspace for developers who want to master what they build.')}
+        <section class="card formbox" style="max-width:470px">
+          <span class="eyebrow">DEVMIRROR ACCOUNT</span>
+          <h2 style="font-size:25px;margin:16px 0">${page === 'login' ? 'Welcome back.' : 'Start your growth journey.'}</h2>
+          
+          <form onsubmit="handleAuthSubmit(event, '${page}')">
+            ${page === 'register' ? `
+              <label class="field" for="authName">Full Name</label>
+              <input type="text" id="authName" placeholder="Jane Developer" autocomplete="name" required>
+            ` : ''}
+
+            <label class="field" for="authEmail">Email address</label>
+            <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+
+            <label class="field" for="authPassword">Password</label>
+            <input id="authPassword" type="password" minlength="6" placeholder="At least 6 characters" autocomplete="${page === 'login' ? 'current-password' : 'new-password'}" required>
+
+            <p class="error" id="authError"></p>
+
+            <button class="primary" id="authSubmitBtn" type="submit" style="width:100%;margin-top:20px">
+              ${page === 'login' ? 'Sign in' : 'Create account'} ${icon('arrow')}
+            </button>
+          </form>
+
+          <div style="margin-top:22px;text-align:center;font-size:12px;color:var(--muted)">
+            ${page === 'login' 
+              ? `Don't have an account yet? <a href="#register" style="color:var(--green);font-weight:600">Register here ↗</a>` 
+              : `Already have an account? <a href="#login" style="color:var(--green);font-weight:600">Sign in here ↗</a>`}
+          </div>
+        </section>
+      `;
+    }
+
+    async function handleAuthSubmit(e, page) {
+      e.preventDefault();
+      const errEl = document.querySelector('#authError');
+      const btn = document.querySelector('#authSubmitBtn');
+      const email = document.querySelector('#authEmail').value.trim();
+      const password = document.querySelector('#authPassword').value;
+
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> &nbsp; Authenticating...`;
+
+      try {
+        const endpoint = page === 'login' ? '/api/auth/login' : '/api/auth/register';
+        const payload = { email, password };
+
+        if (page === 'register') {
+          payload.name = document.querySelector('#authName').value.trim();
+        }
+
+        const data = await apiRequest(endpoint, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        if (data.token) {
+          localStorage.setItem('devmirror_token', data.token);
+        }
+
+        await checkAuth();
+        toast(page === 'register' ? 'Account created successfully!' : 'Signed in successfully!');
+        go('dashboard');
+      } catch (err) {
+        errEl.textContent = err.message || 'Authentication failed. Please verify credentials.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = page === 'login' ? 'Sign in' : 'Create account';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 3. Repositories View
+    // -------------------------------------------------------------
+    async function renderRepositories(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Your Analyzed Repositories', 'Sign in to access and manage your repositories.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to View Repositories</h2>
+            <p style="margin:12px 0 24px">Connect your developer account to index GitHub repositories, inspect architectural patterns, and start practice interviews.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="empty"><div class="spinner"></div><p style="margin-top:15px">Fetching your repositories...</p></div>`;
+      try {
+        const data = await apiRequest('/api/repos');
+        cachedRepos = data.repositories || [];
+
+        if (cachedRepos.length === 0) {
+          container.innerHTML = `
+            ${heading('Your Analyzed Repositories', 'No repositories analyzed yet.', addbtn())}
+            <div class="card empty">
+              <p>You haven’t analyzed any public repositories yet.</p>
+              <button class="primary" style="margin-top:15px" onclick="go('analyze')">Analyze a GitHub Repository</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          ${heading('Your work, under the lens.', 'Explore your projects and practice explaining the decisions behind them.', addbtn())}
+          <section class="card panel">
+            <table class="repo-table">
+              <thead><tr><th>REPOSITORY</th><th>DETECTED STACK</th><th>COMMIT</th><th>ACTION</th></tr></thead>
+              <tbody>
+                ${cachedRepos.map(r => `
+                  <tr>
+                    <td>
+                      <div class="reponame">
+                        <span class="repoicon">${icon('repositories')}</span>
+                        <div>
+                          <a href="#repo-${r._id}"><b>${r.owner}/${r.repo}</b></a>
+                          <small><a href="${r.url}" target="_blank" style="color:#6d7988">${r.url} ↗</a></small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div style="display:flex;gap:5px;flex-wrap:wrap">
+                        ${(r.technologies || []).slice(0, 3).map(t => `<span class="tag">${t.name}</span>`).join('')}
+                      </div>
+                    </td>
+                    <td style="color:#858f9c;font-size:11px">${(r.commitSha || '').slice(0, 7)}</td>
+                    <td>
+                      <button class="primary" style="padding:6px 12px;font-size:11px" onclick="startInterviewSession('${r._id}')">
+                        Practice ${icon('arrow')}
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </section>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          ${heading('Repositories', 'Error fetching repositories.', addbtn())}
+          <div class="card empty">
+            <p class="error">${err.message}</p>
+            <button class="secondary" style="margin-top:14px" onclick="renderRepositories(document.querySelector('#app'))">Retry ${icon('arrow')}</button>
+          </div>
+        `;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 4. Analyze View
+    // -------------------------------------------------------------
+    function renderAnalyze(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Repository Analyzer', 'Sign in to analyze public GitHub repositories.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to Analyze Repositories</h2>
+            <p style="margin:12px 0 24px">We'll inspect the repository file tree, extract verified evidence snippets, and detect the core technologies.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        ${heading('Meet your code, again.', 'Enter any public GitHub repository or username.')}
+        <section class="card formbox">
+          <span class="eyebrow">REPOSITORY ANALYZER</span>
+          <h2 style="font-size:22px;margin-top:15px">Every project has an architecture story.</h2>
+          <p>We'll inspect the repository file tree, extract verified evidence snippets, and detect the core technologies.</p>
+          
+          <form onsubmit="handleAnalyzeSubmit(event)">
+            <label class="field" for="repoUrl">GitHub Repository URL or username</label>
+            <input id="repoUrl" type="text" placeholder="https://github.com/expressjs/express or octocat/Hello-World" required>
+            
+            <p class="error" id="analyzeError"></p>
+
+            <button class="primary" id="analyzeBtn" type="submit" style="margin-top:20px">
+              Analyze Repository ${icon('arrow')}
+            </button>
+          </form>
+        </section>
+      `;
+    }
+
+    async function handleAnalyzeSubmit(e) {
+      e.preventDefault();
+      const errEl = document.querySelector('#analyzeError');
+      const btn = document.querySelector('#analyzeBtn');
+      const url = document.querySelector('#repoUrl').value.trim();
+
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> &nbsp; Fetching GitHub Tree & Detecting Stack...`;
+
+      try {
+        const data = await apiRequest('/api/repos/analyze', {
+          method: 'POST',
+          body: JSON.stringify({ url }),
+          timeout: 25000 // Allow up to 25s for GitHub API tree inspection
+        });
+
+        toast(`Repository ${data.repository.owner}/${data.repository.repo} analyzed successfully!`);
+        go(`repo-${data.repository._id}`);
+      } catch (err) {
+        errEl.textContent = err.message || 'Analysis failed. Please check the repository URL and try again.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `Analyze Repository ${icon('arrow')}`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 5. Repo Details View
+    // -------------------------------------------------------------
+    async function renderRepoDetail(container, repoId) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Repository Analysis', 'Sign in to view repository details.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to Access Details</h2>
+            <p style="margin:12px 0 24px">Sign in to view verified code evidence snippets and start technical mock interviews.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="empty"><div class="spinner"></div><p style="margin-top:15px">Loading repository analysis...</p></div>`;
+      try {
+        const data = await apiRequest(`/api/repos/${repoId}`);
+        const repo = data.repository;
+        activeRepoId = repo._id;
+
+        const evidence = repo.evidence || [];
+        const techs = repo.technologies || [];
+
+        container.innerHTML = `
+          ${heading(`${repo.owner}/${repo.repo}`, `Commit SHA: ${(repo.commitSha || '').slice(0, 8)} · ${repo.totalFiles || 0} files analyzed`, `
+            <button class="primary" onclick="startInterviewSession('${repo._id}')">
+              ${icon('interview')} Practice with this Project
+            </button>
+          `)}
+
+          <div class="grid">
+            <section class="card panel">
+              <div class="panel-head">
+                <h2>Verified Code Evidence Excerpts</h2>
+                <span class="tag">Live Snapshot</span>
+              </div>
+              ${evidence.length > 0 ? evidence.map((ev, i) => `
+                <div style="margin-bottom:18px">
+                  <span style="font-size:12px;color:var(--green)">↳ ${escapeHTML(ev.file)}</span>
+                  <small style="color:var(--muted);display:block;margin:3px 0 6px">${escapeHTML(ev.description)}</small>
+                  <pre style="white-space:pre-wrap;background:#0c1013;padding:12px;border-radius:6px;color:#a6c78e;font-size:11px;border:1px solid #232a32">${escapeHTML(ev.snippet)}</pre>
+                </div>
+              `).join('') : '<p class="small">No code evidence snippets extracted.</p>'}
+            </section>
+
+            <section class="card panel">
+              <h2>Detected Technologies</h2>
+              <div class="toolbar" style="margin-top:10px">
+                ${techs.map(t => `<span class="tag">${escapeHTML(t.name)}</span>`).join('')}
+              </div>
+              <p>Our question engine uses these verified files to generate specific assessment scenarios.</p>
+
+              <h2 style="margin-top:30px">Repository Link</h2>
+              <p><a href="${repo.url}" target="_blank" rel="noopener noreferrer" style="color:var(--green)">Open on GitHub ↗</a></p>
+
+              <button class="primary" style="width:100%;margin-top:20px" onclick="startInterviewSession('${repo._id}')">
+                Begin Mock Interview ${icon('arrow')}
+              </button>
+            </section>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          <div class="card empty">
+            <p class="error">${err.message}</p>
+            <button class="secondary" style="margin-top:14px" onclick="renderRepoDetail(document.querySelector('#app'), '${repoId}')">Retry ${icon('arrow')}</button>
+          </div>
+        `;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 6. Interview Engine View
+    // -------------------------------------------------------------
+    async function startInterviewSession(repoId) {
+      if (!currentUser) {
+        toast('Please sign in to start a practice interview.');
+        go('login');
+        return;
+      }
+      toast('Generating project-grounded questions...');
+      try {
+        const data = await apiRequest('/api/interviews/start', {
+          method: 'POST',
+          body: JSON.stringify({ repositoryId: repoId }),
+          timeout: 25000
+        });
+        currentInterview = data.interview;
+        interviewIndex = 0;
+        go('interview');
+      } catch (err) {
+        toast(`Failed to start interview: ${err.message}`);
+      }
+    }
+
+    async function renderInterview(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Live Mock Interview', 'Sign in to access mock interviews.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to Practice</h2>
+            <p style="margin:12px 0 24px">Practice architectural decisions and technical reasoning grounded directly in your code.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+          </div>
+        `;
+        return;
+      }
+
+      if (!currentInterview || !currentInterview.questions || currentInterview.questions.length === 0) {
+        container.innerHTML = `
+          ${heading('Live Mock Interview', 'Start an interview from your analyzed repositories.')}
+          <div class="card empty">
+            <p>No active interview session found.</p>
+            <button class="primary" style="margin-top:15px" onclick="go('repositories')">Select a Repository</button>
+          </div>
+        `;
+        return;
+      }
+
+      const qList = currentInterview.questions;
+      const q = qList[interviewIndex];
+      const totalQ = qList.length;
+
+      const existingAnswer = (currentInterview.answers || []).find(a => a.questionId === q.id);
+      const answerVal = existingAnswer ? existingAnswer.answerText : '';
+      const savedKey = localStorage.getItem('sarvam_api_key') || '';
+
+      container.innerHTML = `
+        ${heading('Less Memorizing. More Understanding.', 'Live practice session grounded strictly in your project files.', `
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="pill">Question ${interviewIndex + 1} of ${totalQ}</span>
+          </div>
+        `)}
+
+        <section class="card formbox" style="max-width:850px">
+          <div class="row">
+            <span class="eyebrow">QUESTION ${interviewIndex + 1} OF ${totalQ}</span>
+            <span class="tag">${escapeHTML(q.skill || 'Architecture')} · ${escapeHTML(q.difficulty || 'intermediate')}</span>
+          </div>
+
+          <div class="bar" style="margin-top:15px">
+            <i style="width:${((interviewIndex + 1) / totalQ) * 100}%"></i>
+          </div>
+
+          <div class="notice" style="margin:20px 0 10px">
+            <b>Grounded in File:</b> <code>${escapeHTML(q.sourceFile)}</code>
+          </div>
+
+          <!-- 2 Interview Modes Toggle -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px;flex-wrap:wrap;gap:10px">
+            <div class="mode-toggle" role="tablist">
+              <button class="mode-btn ${interviewMode === 'text' ? 'active' : ''}" onclick="toggleInterviewMode('text')" title="Display question as text">
+                📄 Text Option
+              </button>
+              <button class="mode-btn ${interviewMode === 'avatar' ? 'active' : ''}" onclick="toggleInterviewMode('avatar')" title="Have an AI character speak the question using Sarvam AI">
+                🎙️ Speaking Character Option (Sarvam AI)
+              </button>
+            </div>
+            <div>
+              <button class="secondary" style="padding:5px 11px;font-size:11px" onclick="toggleSarvamSettings()">
+                ⚙️ Sarvam Voice Settings ${savedKey ? '<span style="color:var(--green)">●</span>' : ''}
+              </button>
+            </div>
+          </div>
+
+          <!-- Sarvam Settings Drawer -->
+          <div id="sarvamSettingsBox" style="display:none;background:#141a16;border:1px solid #2d3e2c;padding:18px;margin-bottom:18px;border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <strong style="color:var(--green);font-size:13px">Sarvam AI Text-to-Speech Configuration</strong>
+              <button class="iconbtn" onclick="toggleSarvamSettings()" style="font-size:12px">✕</button>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">
+              Enter your <b>Sarvam AI Subscription Key</b> (from sarvam.ai). If blank, DevMirror uses high-fidelity browser voice synthesis fallback.
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 180px;gap:12px;margin-bottom:12px">
+              <div>
+                <label class="field" style="margin-top:0" for="sarvamKeyInput">Sarvam Subscription Key:</label>
+                <input type="password" id="sarvamKeyInput" placeholder="Paste your Sarvam API Key..." value="${escapeHTML(savedKey)}">
+              </div>
+              <div>
+                <label class="field" style="margin-top:0" for="sarvamSpeakerSelect">Interviewer Voice:</label>
+                <select id="sarvamSpeakerSelect" style="width:100%;background:#101217;border:1px solid var(--line);border-radius:7px;padding:12px 10px;color:#f0f1f2">
+                  <option value="meera" ${sarvamSpeaker === 'meera' ? 'selected' : ''}>Meera (Female)</option>
+                  <option value="shubh" ${sarvamSpeaker === 'shubh' ? 'selected' : ''}>Shubh (Male)</option>
+                  <option value="arvind" ${sarvamSpeaker === 'arvind' ? 'selected' : ''}>Arvind (Male)</option>
+                  <option value="pavithra" ${sarvamSpeaker === 'pavithra' ? 'selected' : ''}>Pavithra (Female)</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="primary" style="padding:7px 14px;font-size:12px" onclick="saveSarvamSettings()">Save Settings</button>
+              <button class="secondary" style="padding:7px 14px;font-size:12px" onclick="testSarvamVoice()">Test Sample Voice</button>
+              ${savedKey ? '<button class="secondary" style="padding:7px 14px;font-size:12px;color:#f87171" onclick="clearSarvamKey()">Remove Key</button>' : ''}
+            </div>
+          </div>
+
+          ${interviewMode === 'avatar' ? `
+            <!-- Option 2: Animated AI Character Speaking Question -->
+            <div class="interviewer-box" id="interviewerBox">
+              <div class="avatar-wrapper">
+                <div class="avatar-aura"></div>
+                <svg class="avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Cybernetic Base -->
+                  <circle cx="50" cy="50" r="42" fill="#18221b" stroke="#3d523a" stroke-width="2.5"/>
+                  <circle cx="50" cy="50" r="36" fill="#121814" stroke="#253523" stroke-width="1.5"/>
+                  
+                  <!-- Headphones -->
+                  <path d="M12 44 C12 24, 88 24, 88 44" stroke="#84a675" stroke-width="3" stroke-linecap="round" fill="none"/>
+                  <rect x="8" y="42" width="8" height="18" rx="4" fill="#a4d18e"/>
+                  <rect x="84" y="42" width="8" height="18" rx="4" fill="#a4d18e"/>
+
+                  <!-- Visor / Eyes -->
+                  <path d="M28 42 Q50 38 72 42" stroke="#52694b" stroke-width="1" fill="none"/>
+                  <ellipse class="eye left-eye" cx="38" cy="45" rx="5" ry="5.5" fill="#cbf0a1"/>
+                  <ellipse class="eye right-eye" cx="62" cy="45" rx="5" ry="5.5" fill="#cbf0a1"/>
+                  <circle cx="39.5" cy="43.5" r="1.8" fill="#111612"/>
+                  <circle cx="63.5" cy="43.5" r="1.8" fill="#111612"/>
+
+                  <!-- Tech Cheeks -->
+                  <circle cx="28" cy="55" r="2.5" fill="#628555" opacity="0.6"/>
+                  <circle cx="72" cy="55" r="2.5" fill="#628555" opacity="0.6"/>
+
+                  <!-- Animated Mouth -->
+                  <path class="mouth-idle" d="M42 63 Q50 68 58 63" stroke="#bcf08e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                  <ellipse class="mouth-speak" cx="50" cy="64" rx="7" ry="5" fill="#bcf08e"/>
+                </svg>
+              </div>
+
+              <div class="speech-status" id="speechStatus">
+                <span>● AI Architect Speaking</span>
+                <div class="sound-waves" id="soundWaves">
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                </div>
+              </div>
+
+              <div class="speech-bubble">
+                <span style="font-size:11px;color:#798972;font-weight:700;display:block;margin-bottom:4px;letter-spacing:1px">QUESTION SPOKEN:</span>
+                <div id="spokenQuestionText" style="font-size:15px;line-height:1.6;color:#e8f4de;font-weight:550">${escapeHTML(q.question)}</div>
+              </div>
+
+              <div class="speech-controls">
+                <button class="secondary" style="font-size:12px;padding:6px 14px" onclick="speakCurrentQuestion(true)" id="replayAudioBtn">
+                  ▶ Replay Question Audio
+                </button>
+                <button class="secondary" style="font-size:12px;padding:6px 14px" onclick="stopSpeaking()" id="stopAudioBtn">
+                  ⏸ Stop Audio
+                </button>
+                <span class="tag" id="voiceProviderTag" style="font-size:11px">Sarvam AI (${sarvamSpeaker})</span>
+              </div>
+            </div>
+          ` : `
+            <!-- Option 1: Clean Text Question Card -->
+            <div class="text-question-card">
+              <div class="question" style="font-size:16px;font-weight:600;margin:4px 0 16px">${escapeHTML(q.question)}</div>
+              <button class="secondary" style="font-size:11px;padding:6px 12px" onclick="speakCurrentQuestion(true)">
+                🔊 Listen to Question
+              </button>
+            </div>
+          `}
+
+          <label class="field" for="answerInput" style="margin-top:20px">Your Technical Explanation & Architecture Reasoning:</label>
+          <textarea id="answerInput" placeholder="Explain your design decisions, error handling, and tradeoffs…">${escapeHTML(answerVal)}</textarea>
+
+          <p class="error" id="answerError"></p>
+
+          <div class="row" style="margin-top:22px">
+            <button class="secondary" ${interviewIndex === 0 ? 'disabled' : ''} onclick="prevQuestion()">
+              ← Previous
+            </button>
+            <button class="primary" id="submitAnswerBtn" onclick="submitCurrentAnswer()">
+              ${interviewIndex === totalQ - 1 ? 'Finish & Finalize Assessment' : 'Next Question'} ${icon('arrow')}
+            </button>
+          </div>
+        </section>
+      `;
+
+      // Auto-trigger voice when entering or changing question in Character mode
+      if (interviewMode === 'avatar') {
+        setTimeout(() => speakCurrentQuestion(false), 300);
+      }
+    }
+
+    function toggleInterviewMode(mode) {
+      interviewMode = mode;
+      localStorage.setItem('devmirror_interview_mode', mode);
+      stopSpeaking();
+      renderInterview(document.querySelector('#app'));
+    }
+
+    function toggleSarvamSettings() {
+      const box = document.querySelector('#sarvamSettingsBox');
+      if (box) {
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function saveSarvamSettings() {
+      const keyInput = document.querySelector('#sarvamKeyInput');
+      const voiceSelect = document.querySelector('#sarvamSpeakerSelect');
+      if (keyInput) {
+        localStorage.setItem('sarvam_api_key', keyInput.value.trim());
+      }
+      if (voiceSelect) {
+        sarvamSpeaker = voiceSelect.value;
+        localStorage.setItem('sarvam_speaker', voiceSelect.value);
+      }
+      toast('Voice and Sarvam AI settings saved.');
+      toggleSarvamSettings();
+      renderInterview(document.querySelector('#app'));
+    }
+
+    function clearSarvamKey() {
+      localStorage.removeItem('sarvam_api_key');
+      toast('Sarvam API key removed. Using default voice.');
+      renderInterview(document.querySelector('#app'));
+    }
+
+    async function testSarvamVoice() {
+      const voiceSelect = document.querySelector('#sarvamSpeakerSelect');
+      const speaker = voiceSelect ? voiceSelect.value : sarvamSpeaker;
+      const testSample = `Hello, I am your technical interviewer powered by Sarvam AI. Let's discuss your system architecture.`;
+      
+      stopSpeaking();
+      const userKey = (document.querySelector('#sarvamKeyInput')?.value || localStorage.getItem('sarvam_api_key') || '').trim();
+
+      toast(`Synthesizing test sample with ${speaker}...`);
+      try {
+        const res = await apiRequest('/api/tts/speak', {
+          method: 'POST',
+          headers: userKey ? { 'x-sarvam-key': userKey } : {},
+          body: JSON.stringify({
+            text: testSample,
+            speaker: speaker,
+            language_code: 'en-IN'
+          })
+        });
+
+        if (res && res.audioBase64) {
+          const audio = new Audio('data:audio/wav;base64,' + res.audioBase64);
+          currentSpeechAudio = audio;
+          audio.play();
+          toast('Playing Sarvam voice sample.');
+          return;
+        }
+
+        speakWithBrowserTTS(testSample, speaker);
+      } catch (e) {
+        speakWithBrowserTTS(testSample, speaker);
+      }
+    }
+
+    async function speakCurrentQuestion(userInitiated = false) {
+      if (!currentInterview || !currentInterview.questions) return;
+      const q = currentInterview.questions[interviewIndex];
+      if (!q || !q.question) return;
+
+      stopSpeaking();
+
+      const box = document.querySelector('#interviewerBox');
+      const statusEl = document.querySelector('#speechStatus span');
+      const tagEl = document.querySelector('#voiceProviderTag');
+
+      if (statusEl) statusEl.textContent = '● Synthesizing voice with Sarvam AI...';
+
+      const userKey = localStorage.getItem('sarvam_api_key') || '';
+      const speaker = localStorage.getItem('sarvam_speaker') || 'meera';
+
+      try {
+        const res = await apiRequest('/api/tts/speak', {
+          method: 'POST',
+          headers: userKey ? { 'x-sarvam-key': userKey } : {},
+          body: JSON.stringify({
+            text: q.question,
+            speaker: speaker,
+            language_code: 'en-IN'
+          })
+        });
+
+        if (res && res.audioBase64) {
+          if (tagEl) tagEl.textContent = `Sarvam AI (${speaker})`;
+          if (statusEl) statusEl.textContent = `● Speaking (Sarvam AI · ${speaker})...`;
+
+          const audio = new Audio('data:audio/wav;base64,' + res.audioBase64);
+          currentSpeechAudio = audio;
+
+          audio.onplay = () => {
+            isSpeaking = true;
+            if (box) box.classList.add('speaking');
+          };
+          audio.onended = () => {
+            isSpeaking = false;
+            if (box) box.classList.remove('speaking');
+            if (statusEl) statusEl.textContent = '● Interviewer Ready';
+          };
+          audio.onpause = () => {
+            isSpeaking = false;
+            if (box) box.classList.remove('speaking');
+          };
+          audio.onerror = () => {
+            isSpeaking = false;
+            if (box) box.classList.remove('speaking');
+            if (statusEl) statusEl.textContent = '● Interviewer Ready';
+          };
+
+          await audio.play();
+          return;
+        }
+
+        speakWithBrowserTTS(q.question, speaker);
+      } catch (err) {
+        console.warn('[TTS] Falling back to browser speech:', err.message);
+        speakWithBrowserTTS(q.question, speaker);
+      }
+    }
+
+    function speakWithBrowserTTS(text, speaker) {
+      if (!('speechSynthesis' in window)) {
+        const statusEl = document.querySelector('#speechStatus span');
+        if (statusEl) statusEl.textContent = '● Speech not supported in browser';
+        return;
+      }
+
+      stopSpeaking();
+      const box = document.querySelector('#interviewerBox');
+      const statusEl = document.querySelector('#speechStatus span');
+      const tagEl = document.querySelector('#voiceProviderTag');
+
+      if (tagEl) tagEl.textContent = 'Browser Voice (Fallback)';
+      if (statusEl) statusEl.textContent = '● Speaking (Browser Speech)...';
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(v => v.lang.includes('IN') || v.name.includes('India')) ||
+                             voices.find(v => v.lang.startsWith('en')) ||
+                             voices[0];
+      if (preferredVoice) utterance.voice = preferredVoice;
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        if (box) box.classList.add('speaking');
+      };
+      utterance.onend = () => {
+        isSpeaking = false;
+        if (box) box.classList.remove('speaking');
+        if (statusEl) statusEl.textContent = '● Interviewer Ready';
+      };
+      utterance.onerror = () => {
+        isSpeaking = false;
+        if (box) box.classList.remove('speaking');
+        if (statusEl) statusEl.textContent = '● Ready';
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeaking() {
+      if (currentSpeechAudio) {
+        currentSpeechAudio.pause();
+        currentSpeechAudio.currentTime = 0;
+        currentSpeechAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isSpeaking = false;
+      const box = document.querySelector('#interviewerBox');
+      if (box) box.classList.remove('speaking');
+      const statusEl = document.querySelector('#speechStatus span');
+      if (statusEl) statusEl.textContent = '● Interviewer Paused / Ready';
+    }
+
+    function prevQuestion() {
+      stopSpeaking();
+      if (interviewIndex > 0) {
+        interviewIndex--;
+        renderInterview(document.querySelector('#app'));
+      }
+    }
+
+    async function submitCurrentAnswer() {
+      stopSpeaking();
+      const input = document.querySelector('#answerInput');
+      const errEl = document.querySelector('#answerError');
+      const btn = document.querySelector('#submitAnswerBtn');
+      const answerText = input.value.trim();
+
+      if (!answerText) {
+        errEl.textContent = 'Please provide an explanation before proceeding.';
+        input.focus();
+        return;
+      }
+
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> &nbsp; Evaluating against Rubric...`;
+
+      try {
+        const q = currentInterview.questions[interviewIndex];
+        const res = await apiRequest(`/api/interviews/${currentInterview._id}/answers`, {
+          method: 'POST',
+          body: JSON.stringify({
+            questionId: q.id,
+            answerText
+          })
+        });
+
+        if (!currentInterview.answers) currentInterview.answers = [];
+        const idx = currentInterview.answers.findIndex(a => a.questionId === q.id);
+        if (idx !== -1) {
+          currentInterview.answers[idx] = { questionId: q.id, answerText, evaluation: res.evaluation };
+        } else {
+          currentInterview.answers.push({ questionId: q.id, answerText, evaluation: res.evaluation });
+        }
+
+        if (interviewIndex < currentInterview.questions.length - 1) {
+          interviewIndex++;
+          renderInterview(document.querySelector('#app'));
+        } else {
+          toast('Finalizing interview and computing skill-gap assessment...');
+          await apiRequest(`/api/interviews/${currentInterview._id}/finish`, {
+            method: 'POST',
+            timeout: 25000
+          });
+          currentInterview = null;
+          go('report');
+        }
+      } catch (err) {
+        errEl.textContent = err.message || 'Error submitting answer.';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function renderComplete(container) {
+      container.innerHTML = `
+        ${heading('Interview Complete', 'Great job finishing the technical interview!')}
+        <div class="card empty">
+          <h2>Evaluation Ready</h2>
+          <p style="margin:12px 0 24px">Your answers have been scored against industry rubrics and your roadmap has been updated.</p>
+          <button class="primary" onclick="go('report')">View Skill Insights Report ${icon('arrow')}</button>
+          <button class="secondary" style="margin-left:8px" onclick="go('roadmap')">Open Roadmap</button>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // 7. Skill Insights & Report View
+    // -------------------------------------------------------------
+    async function renderReport(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Skill Insights Report', 'Sign in to access your assessment report.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to View Skill Insights</h2>
+            <p style="margin:12px 0 24px">Track your technical mastery score, strengths, priority gaps, and benchmark comparisons.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="empty"><div class="spinner"></div><p style="margin-top:15px">Loading skill assessment report...</p></div>`;
+      try {
+        const listData = await apiRequest('/api/assessments');
+        const assessments = listData.assessments || [];
+
+        if (assessments.length === 0) {
+          container.innerHTML = `
+            ${heading('Skill Insights Report', 'No assessments completed yet.')}
+            <div class="card empty">
+              <p>Complete an interview assessment to generate your skill report.</p>
+              <button class="primary" style="margin-top:15px" onclick="go('repositories')">Take an Assessment</button>
+            </div>
+          `;
+          return;
+        }
+
+        const latest = assessments[0];
+        const detailData = await apiRequest(`/api/assessments/${latest._id}`);
+        const report = detailData.assessment;
+
+        const skillScores = report.skillScores instanceof Object ? report.skillScores : {};
+
+        let skillBarsHtml = Object.entries(skillScores).map(([skill, s]) => `
+          <div class="skill">
+            <div class="row">
+              <span><b>${escapeHTML(skill)}</b> · Benchmark: ${s.benchmark || 75}%</span>
+              <span style="color:var(--green)">${s.score}% (Gap: ${s.gap || 0}%)</span>
+            </div>
+            <div class="bar"><i style="width:${Math.min(100, Math.max(0, s.score))}%;"></i></div>
+          </div>
+        `).join('');
+
+        container.innerHTML = `
+          ${heading('Live Skill Assessment Report', `Evaluation completed on ${new Date(report.createdAt).toLocaleDateString()}`, `
+            <button class="primary" onclick="go('roadmap')">View Learning Roadmap ${icon('arrow')}</button>
+          `)}
+
+          <div class="grid">
+            <section class="card panel">
+              <div class="row">
+                <h2>Technical Mastery Score</h2>
+                <span class="tag">Internal Benchmark: ${report.targetBenchmark}%</span>
+              </div>
+              <div class="value" style="font-size:50px">${report.overallScore}<span> /100</span></div>
+              <div class="notice">${escapeHTML(report.summaryFeedback)}</div>
+              ${skillBarsHtml}
+            </section>
+
+            <section class="card panel">
+              <span class="eyebrow">ASSESSMENT ANALYSIS</span>
+              <h2 style="margin-top:15px">Key Strengths</h2>
+              <div style="margin:10px 0 20px">
+                ${(report.strengths || []).map(s => `<p style="color:var(--green);margin:4px 0">✓ ${escapeHTML(s)}</p>`).join('') || '<p class="small">Keep practicing to build proven strengths.</p>'}
+              </div>
+
+              <h2>Priority Gap Areas</h2>
+              <div style="margin:10px 0 20px">
+                ${(report.weaknesses || []).map(w => `<p style="color:#f3a2a2;margin:4px 0">! ${escapeHTML(w)}</p>`).join('') || '<p class="small">All assessed benchmarks achieved.</p>'}
+              </div>
+
+              <button class="primary" style="width:100%" onclick="go('roadmap')">
+                Open Personalized Roadmap →
+              </button>
+            </section>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          ${heading('Skill Insights Report', 'Error loading assessment report.')}
+          <div class="card empty">
+            <p class="error">${err.message}</p>
+            <button class="secondary" style="margin-top:14px" onclick="renderReport(document.querySelector('#app'))">Retry ${icon('arrow')}</button>
+          </div>
+        `;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 8. Roadmap View
+    // -------------------------------------------------------------
+    async function renderRoadmap(container) {
+      if (!currentUser) {
+        container.innerHTML = `
+          ${heading('Learning Roadmap', 'Sign in to access your personalized roadmap.')}
+          <div class="card formbox" style="text-align:center;max-width:540px;margin:30px auto">
+            <h2>Sign In to View Your Roadmap</h2>
+            <p style="margin:12px 0 24px">Master prerequisite skills and close identified gaps with tailored learning recommendations.</p>
+            <button class="primary" onclick="go('login')">Sign In to Continue</button>
+            <button class="secondary" style="margin-left:8px" onclick="go('register')">Create Account</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="empty"><div class="spinner"></div><p style="margin-top:15px">Loading your personalized learning roadmap...</p></div>`;
+      try {
+        const data = await apiRequest('/api/roadmap');
+        const roadmap = data.roadmap;
+
+        if (!roadmap || !roadmap.tasks || roadmap.tasks.length === 0) {
+          container.innerHTML = `
+            ${heading('Your Personalized Roadmap', 'Curated learning path.')}
+            <div class="card empty">
+              <p>No active roadmap. Complete an interview to generate tailored recommendations.</p>
+              <button class="primary" style="margin-top:15px" onclick="go('repositories')">Take an Assessment</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          ${heading('Your Learning Roadmap', `Master assessed skill gaps and foundational prerequisites.`, `
+            <span class="pill">${roadmap.completedTasksCount || 0} / ${roadmap.totalTasks || 0} Completed (${roadmap.progress || 0}%)</span>
+          `)}
+
+          <div class="grid">
+            <section class="card panel">
+              <div class="panel-head">
+                <h2>Prioritized Skill Tasks</h2>
+                <span class="tag">DAG Dependency Graph</span>
+              </div>
+              <div class="bar" style="margin-bottom:20px"><i style="width:${roadmap.progress || 0}%"></i></div>
+
+              ${roadmap.tasks.map(task => `
+                <label class="task" id="task-${task.id}">
+                  <input type="checkbox" ${task.status === 'completed' ? 'checked' : ''} onchange="toggleTaskStatus('${task.id}', this.checked)">
+                  <div style="flex:1">
+                    <div class="row">
+                      <strong>${escapeHTML(task.title)}</strong>
+                      <span class="tag ${task.priority === 'high' ? '' : 'purple'}">${escapeHTML(task.priority)} priority</span>
+                    </div>
+                    <p>${escapeHTML(task.description)}</p>
+                    <div style="display:flex;gap:12px;font-size:11px">
+                      <span style="color:var(--muted)">Skill: <b>${escapeHTML(task.skill)}</b></span>
+                      ${task.resources && task.resources[0] ? `<a href="${task.resources[0].url}" target="_blank" rel="noopener noreferrer" style="color:var(--green)">${escapeHTML(task.resources[0].title)} ↗</a>` : ''}
+                    </div>
+                  </div>
+                </label>
+              `).join('')}
+            </section>
+
+            <section class="card panel" style="align-self:start">
+              <span class="eyebrow">PROGRESS ENGINE</span>
+              <h2 style="font-size:22px;margin-top:15px">Build. Test. Master.</h2>
+              <p>Tasks are ordered based on prerequisite dependencies. When you check a task as complete, your progress automatically persists on the backend.</p>
+
+              <div class="value" style="font-size:42px;margin:20px 0">${roadmap.progress || 0}<span>%</span></div>
+              <div class="bar" style="margin-bottom:25px"><i style="width:${roadmap.progress || 0}%"></i></div>
+
+              <button class="primary" style="width:100%" onclick="go('repositories')">
+                Take Another Assessment ${icon('arrow')}
+              </button>
+            </section>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          ${heading('Learning Roadmap', 'Error loading roadmap.')}
+          <div class="card empty">
+            <p class="error">${err.message}</p>
+            <button class="secondary" style="margin-top:14px" onclick="renderRoadmap(document.querySelector('#app'))">Retry ${icon('arrow')}</button>
+          </div>
+        `;
+      }
+    }
+
+    async function toggleTaskStatus(taskId, isCompleted) {
+      try {
+        await apiRequest(`/api/roadmap/tasks/${taskId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: isCompleted ? 'completed' : 'pending' })
+        });
+        toast(isCompleted ? 'Task marked complete! Progress updated.' : 'Task marked pending.');
+        // Refresh roadmap view silently
+        renderRoadmap(document.querySelector('#app'));
+      } catch (err) {
+        toast(`Error updating task: ${err.message}`);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Initial Load & Health Polling
+    // -------------------------------------------------------------
+    checkBackendHealth(false);
+    // Poll backend health every 30 seconds
+    setInterval(() => checkBackendHealth(false), 30000);
+
+    // Initial auth check and page render
+    checkAuth().finally(() => {
+      render(location.hash.slice(1) || 'dashboard');
+    });
+  </script>
+</body>
+</html>

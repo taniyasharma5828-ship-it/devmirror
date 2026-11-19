@@ -1,0 +1,32 @@
+{
+  "name": "devmirror",
+  "version": "1.0.0",
+  "description": "DevMirror - GitHub-powered developer assessment platform",
+  "main": "index.js",
+  "scripts": {
+    "build": "node -e \"const fs = require('fs'); fs.mkdirSync('public', { recursive: true }); fs.copyFileSync('frontend/index.html', 'index.html'); fs.copyFileSync('frontend/index.html', 'public/index.html'); console.log('Build completed successfully.');\"",
+    "start": "node index.js",
+    "dev": "npm run dev --prefix backend",
+    "test": "npm test --prefix backend"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "zod": "^3.24.1"
+  },
+  "keywords": [
+    "devmirror",
+    "assessment",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "ISC"
+}
